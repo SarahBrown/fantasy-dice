@@ -10,35 +10,29 @@ app = socketio.WSGIApp(sio)
 def connect(sid, environ): 
     print('connect ', sid)
     # users will be asked their name before being allowed to connect
-    #query = environ["QUERY_STRING"]nameAndCampaign
-    #name = query[query.find("name=")+5:query.find("&")]
-    #Roll_tracker.add_player(sid)
 
 @sio.event
-# campaign serves the same role as "room" from Stemmy
-def join_campaign(sid, nameAndCampaign):
-    name = nameAndCampaign[0]
-    campaign = nameAndCampaign[1]
-
-    # make sure name and campaign are alphanumeric and within the allowed lengths
-    if str.isalnum(name) and str.isalnum(campaign) and 2 < len(name) < 12 and 2 < len(campaign) < 12:
+# campaigns are rooms
+def join_campaign(sid, name, campaign_id):
+    # make sure player name and campaign are alphanumeric and within the allowed lengths
+    if str.isalnum(name) and str.isalnum(campaign_id) and 2 < len(name) < 12 and 2 < len(campaign_id) < 12:
         # lowercase campaign to make it easy to type
-        campaign = str.lower(campaign)
-
+        campaign_id = str.lower(campaign_id)
         print('received_name ', sid)
-        # assign name to player
-        Roll_tracker.join_campaign(sid, name, campaign)
-        # put up leaderboard so everyone can see if they are in before starting
-        sio.enter_campaign(sid, campaign)
-        sio.emit('joined_campaign', campaign, campaign=sid)
-        sio.emit('leaderboard', Roll_tracker.get_leaderboard(campaign), campaign=campaign)
+        # create player and assign to campaign
+        Roll_tracker.join_campaign(sid, name, campaign_id)
+        # put up the roll history and list of players
+        sio.enter_campaign(sid, campaign_id)
+        sio.emit('joined_campaign', campaign=campaign_id, player=sid)
+        sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), campaign=campaign_id)
+        sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), campaign=campaign_id)
 
 @sio.event
 def start(sid):
-    campaign = Roll_tracker.playercampaign[sid]
+    campaign_id = Roll_tracker.player_in_campaign[sid]
 
     print('starting')
-    # don't allow start game until certain number of players
+    # don't allow start game until certain number of players TODO change this
     min_players = 1
     if len(Roll_tracker.campaigns[campaign]) >= min_players: 
         # create initial set of dice and send to everyone
@@ -48,15 +42,11 @@ def start(sid):
         sio.emit('leaderboard', Roll_tracker.get_leaderboard(campaign), campaign=campaign)
 
 @sio.event
-def receive_answer(sid, ans):
-    try:
-        # make sure the input is an integer (already checked in JS)
-        answer = int(ans)
-    except:
-        # ignore a non-numeric answer
-        return
-    print('received_answer ', sid)
-
+def receive_roll_request(sid, roll_purpose:str):
+    print('received_roll_request ', sid)
+    # TODO use character sheet to inform rolls + modifiers
+    # TODO make method for creating a new roll template
+    # TODO receive advantage, disad, or neither
     # check for cheat codes
     if answer == 3141:
         # give a lot of points

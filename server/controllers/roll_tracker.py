@@ -57,7 +57,11 @@ class Roll_tracker:
     @staticmethod
     def get_roll_history(campaign_id):
         return Roll_tracker.campaigns[campaign_id].roll_history
-
+    
+    @staticmethod
+    def get_player_list(campaign_id):
+        return Roll_tracker.campaigns[campaign_id].players
+    
     @staticmethod
     def reset():
         # reset all players and campaigns
