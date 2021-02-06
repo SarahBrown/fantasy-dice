@@ -3,7 +3,12 @@ body {
   color: #FEDCBA;
   font-family: 'Dancing Script', cursive;    
   font-size: 20px;
+}
 
+.h1 {
+  color: #FEDCBA;
+  font-family: 'Dancing Script', cursive;    
+  font-size: 40px;
 }
 
 .navbar {
@@ -25,14 +30,22 @@ body {
 .navbar{
   color: #FEDCBA;
   font-family: 'Dancing Script', cursive;
+  background-color: #1f0b03;
+  margin-bottom: 0%;
+  padding: 3%;
 }
 
 /* Add a gray background color and some padding to the footer */
-footer {
+.footer {
   background-color: #1f0b03;
   padding: 25px;
 }
 
 .panel {
   background-color: #1f0b03;
+  text-align: center;
 }
+
+
+
+
