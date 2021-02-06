@@ -51,3 +51,15 @@ body {
   color: #fff;
   border-bottom-color: #fff;
 }
+
+
+body {
+  background-color: #1f0b03;
+  color: #FEDCBA;
+  font-family: 'Dancing Script', cursive;
+  font-size: 48px;
+}
+
+.footer {
+position: fixed;
+}

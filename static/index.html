@@ -1,35 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>DND Name Here</title>
+  <title>Fantasy Dice</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <link href="splash.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <style>
+    /* Remove the navbar's default rounded borders and increase the bottom margin */
 
-<style type="text/CSS">
     body {
-        background-color: #1f0b03;
-        color: #FEDCBA;
-        font-family: 'Dancing Script', cursive;
-        font-size: 48px;
+      /* background-image: url(assets/background.png); */
+      background-color: #1f0b03;
+      color: #FEDCBA;
+      /* background-attachment: fixed;
+      background-position: center;
+      background-size: 100%;
+      background-repeat: no-repeat; */
     }
-</style>
+
+    .navbar {
+      background-color: #1f0b03;
+      margin-bottom: 50px;
+      border-radius: 0;
+    }
+
+    /* Remove the jumbotron's default bottom margin */
+    .jumbotron {
+      background-color: #1f0b03;
+      margin-bottom: 0;
+      font-family: 'Dancing Script', cursive;
+      font-size: 48px;
+      background-image: url("../img/jumbotron_bg.jpg");
+      background-size: cover;
+    }
+
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #1f0b03;
+      padding: 25px;
+    }
+
+    .panel {
+      background-color: #1f0b03;
+    }
+  </style>
 </head>
+
 <body>
 
-  <main class="px-3">
-    <div class="row">
-      <div class="col-sm-4">.col-sm-4</div>
-      <div class="col-sm-4">.col-sm-4</div>
-      <div class="col-sm-4">.col-sm-4</div>
-    </div> 
-  </main>
-<div class="container">
+  <div class="jumbotron">
+    <div class="container text-center">
+      <h1>Fantasy Dice</h1>
+    </div>
+  </div>
 
-</div>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-4">
+        <div class="panel">
+          <div class="panel-body"><img src="assets\profilePic1.PNG" class="img-responsive" style="width:100%"
+              alt="Image"></div>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <div class="panel">
+          <div class="panel-body"><img src="assets\profilePic1.PNG" class="img-responsive" style="width:100%"
+              alt="Image"></div>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <div class="panel">
+          <div class="panel-body"><img src="assets\profilePic1.PNG" class="img-responsive" style="width:100%"
+              alt="Image"></div>
+        </div>
+      </div>
+    </div>
+  </div><br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="panel panel-warning">
+          <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><br><br>
+
+  <footer class="container-fluid text-center">
+    <div class="row">
+      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        <label class="btn btn-secondary active">
+          <input type="radio" name="options" id="option1" autocomplete="off" checked> Dice
+        </label>
+        <label class="btn btn-secondary">
+          <input type="radio" name="options" id="option2" autocomplete="off"> Character
+        </label>
+        <label class="btn btn-secondary">
+          <input type="radio" name="options" id="option3" autocomplete="off"> Options
+        </label>
+      </div>
+    </div>
+  </footer>
 
 </body>
-</html> 
+
+</html>
