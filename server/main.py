@@ -1,6 +1,5 @@
 import eventlet
 import socketio
-# from controllers.game_logic import game_logic
 from controllers.roll_tracker import Roll_tracker
 
 sio = socketio.Server(cors_allowed_origins='*')
@@ -27,72 +26,52 @@ def join_campaign(sid, name, campaign_id):
         sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), campaign=campaign_id)
         sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), campaign=campaign_id)
 
-@sio.event
-def start(sid):
-    campaign_id = Roll_tracker.player_in_campaign[sid]
-
-    print('starting')
-    # don't allow start game until certain number of players TODO change this
-    min_players = 1
-    if len(Roll_tracker.campaigns[campaign]) >= min_players: 
-        # create initial set of dice and send to everyone
-        dice_list = game_logic.generate_dice(num_dice=3)
-        sio.emit('new_dice', dice_list, campaign=campaign)
-        # put up leaderboard with everyone (with all 0 score)
-        sio.emit('leaderboard', Roll_tracker.get_leaderboard(campaign), campaign=campaign)
+# @sio.event
+# def start(sid):
+#     campaign_id = Roll_tracker.player_in_campaign[sid]
+#     print('starting')
+    # # don't allow start game until certain number of players are in
+    # min_players = 1
+    # if len(Roll_tracker.campaigns[campaign_id].players) >= min_players: 
+    #     # Do stuff to start the game
 
 @sio.event
-def receive_roll_request(sid, roll_purpose:str):
+# a player has initiated a roll. we have their SID,
+# the roll purpose (DEX save, attack roll, etc),
+# and mod in {1:advantage, -1:disadvantage, 0:neither}
+def receive_roll_request(sid, roll_purpose:str, mod:int):
     print('received_roll_request ', sid)
     # TODO use character sheet to inform rolls + modifiers
     # TODO make method for creating a new roll template
     # TODO receive advantage, disad, or neither
-    # check for cheat codes
-    if answer == 3141:
-        # give a lot of points
-        Roll_tracker.update_score(sid, points=15)
-        print('Cheater! ', sid)
-    # check for reset code
-    elif answer == 6282:
-        # reset
-        Roll_tracker.reset()
-    # check if result is correct
-    elif game_logic.check_result(answer):
-        # result is correct, so add to the user's score
-        Roll_tracker.update_score(sid, points=1)
-    # result is incorrect
-    else:
-        sio.emit("incorrect", room=sid)
-        # return instead of generating new dice
-        return
 
-    campaign = Roll_tracker.playercampaign[sid]
-    
-    # generate new dice and update leaderboard
-    dice_list = game_logic.generate_dice(num_dice=3)
-    sio.emit('new_dice', dice_list, room=campaign)
-    sio.emit('leaderboard', Roll_tracker.get_leaderboard(campaign), room=campaign)
-    return
+    # TODO tell the user what kind of roll to make based on roll_purpose & char sheet.
+    #   don't need to tell them modifiers, just the dice, since we handle that here
 
-@sio.event
-def health(sid, data):
-    print('health ', data)
-    # send "health" back to requesters
-    sio.emit("health", room=sid)
+    # TODO have the user make the roll and get the result, or compute it ourselves
+    roll_result = None
+
+    # identify the campaign to which the player belongs
+    campaign_id = Roll_tracker.player_in_campaign[sid]
+    # send the result of the roll for a special display
+    sio.emit('new_roll_result', roll_result, campaign=campaign_id)
+    # add the new roll to the campaign's roll history
+    Roll_tracker.receive_roll(sid, roll_purpose, roll_result)
+    # send new roll history to update the chat display
+    sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), campaign=campaign_id)
 
 @sio.event
 def disconnect(sid):
     print('disconnect ', sid)
     # remove person from the list
     # important so refreshing does not keep increasing the number of people
-    if sid in Roll_tracker.playercampaign:
-        campaign = Roll_tracker.playercampaign[sid]
-        sio.leave_campaign(sid, campaign)
+    if sid in Roll_tracker.player_in_campaign:
+        campaign_id = Roll_tracker.player_in_campaign[sid]
+        sio.leave_campaign(sid, campaign_id) # TODO check this works
         Roll_tracker.remove_player(sid)
-
-        # if the campaign still exists, update everyone
-        if campaign in Roll_tracker.campaigns:
-            sio.emit('leaderboard', Roll_tracker.get_leaderboard(campaign), room=campaign)
+        # update the player list display
+        sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), campaign=campaign_id)
+        
 
 if __name__ == '__main__':
     eventlet.wsgi.server(eventlet.listen(('', 5000)), app)

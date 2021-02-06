@@ -47,8 +47,8 @@ class Roll_tracker:
             del Roll_tracker.campaigns[campaign]
 
     @staticmethod
-    # send a new roll to be added to the history and displayed to everyone in the chat
-    def send_roll(sid, roll_purpose:str, roll_result:int):
+    # get a new roll to be added to the history and displayed to everyone in the chat
+    def receive_roll(sid, roll_purpose:str, roll_result:int):
         # find which campaign the player is in
         campaign_id = Roll_tracker.player_in_campaign[sid]
         # add the roll to that campaign's history
