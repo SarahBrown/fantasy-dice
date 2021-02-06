@@ -23,7 +23,7 @@ body {
   margin-bottom: 0;
   font-family: 'Dancing Script', cursive;
   font-size: 48px;
-  background-image: url(assets/tavernBackground.png);
+  background-image: url(assets/tavernBackground3.png);
   background-size: cover;
 }
 
@@ -44,6 +44,21 @@ body {
 .panel {
   background-color: #1f0b03;
   text-align: center;
+  
+}
+
+.panel-warning{
+  border-color: #FEDCBA;
+}
+
+.btn {
+  background-color: #1f0b03;
+  border-color: #FEDCBA;
+}
+
+.btn:hover {
+  background-color: #ffa347;
+  border-color: #1f0b03;
 }
 
 
