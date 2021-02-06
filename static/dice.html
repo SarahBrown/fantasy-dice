@@ -10,45 +10,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
-  <style>
-    /* Remove the navbar's default rounded borders and increase the bottom margin */
-
-    body {
-      /* background-image: url(assets/background.png); */
-      background-color: #1f0b03;
-      color: #FEDCBA;
-      /* background-attachment: fixed;
-      background-position: center;
-      background-size: 100%;
-      background-repeat: no-repeat; */
-    }
-
-    .navbar {
-      background-color: #1f0b03;
-      margin-bottom: 50px;
-      border-radius: 0;
-    }
-
-    /* Remove the jumbotron's default bottom margin */
-    .jumbotron {
-      background-color: #1f0b03;
-      margin-bottom: 0;
-      font-family: 'Dancing Script', cursive;
-      font-size: 48px;
-      background-image: url(assets/tavernBackground.png);
-      background-size: cover;
-    }
-
-    /* Add a gray background color and some padding to the footer */
-    footer {
-      background-color: #1f0b03;
-      padding: 25px;
-    }
-
-    .panel {
-      background-color: #1f0b03;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -95,21 +57,21 @@
     </div>
   </div><br><br>
 
-  <footer class="container-fluid text-center">
+  <nav class="navbar navbar-inverse navbar-fixed-bottom text-center">
     <div class="row">
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-secondary active">
-          <input type="radio" name="options" id="option1" autocomplete="off" checked> Dice
-        </label>
-        <label class="btn btn-secondary">
-          <input type="radio" name="options" id="option2" autocomplete="off"> Character
-        </label>
-        <label class="btn btn-secondary">
-          <input type="radio" name="options" id="option3" autocomplete="off"> Options
-        </label>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-secondary active">
+            <input type="radio" name="options" id="option1" autocomplete="off" checked> Dice
+          </label>
+          <label class="btn btn-secondary">
+            <input type="radio" name="options" id="option2" autocomplete="off" > Character
+          </label>
+          <label class="btn btn-secondary">
+            <input type="radio" name="options" id="option3" autocomplete="off" > Options
+          </label>
+        </div>
       </div>
-    </div>
-  </footer>
+  </nav> 
 
 </body>
 
