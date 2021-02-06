@@ -44,7 +44,7 @@ body {
 .panel {
   background-color: #1f0b03;
   text-align: center;
-  
+  font-size:15px;
 }
 
 .panel-warning{
@@ -61,6 +61,10 @@ body {
   border-color: #1f0b03;
 }
 
+.list-group-item {
+  background-color: #1f0b03;
+  margin: 5%;
+}
 
 
 
