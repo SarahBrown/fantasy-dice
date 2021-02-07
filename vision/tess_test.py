@@ -12,11 +12,13 @@ def get_grayscale(image):
 
 # noise removal
 def remove_noise(image):
-    return cv2.medianBlur(image,5)
+    return cv2.medianBlur(image,3)
  
 #thresholding
 def thresholding(image):
+    image = cv2.GaussianBlur(image, (5,5),0)
     return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    #return cv2.adaptiveThreshold(image,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,13,2)
 
 #dilation
 def dilate(image):
@@ -25,7 +27,7 @@ def dilate(image):
     
 #erosion
 def erode(image):
-    kernel = np.ones((5,5),np.uint8)
+    kernel = np.ones((3,3),np.uint8)
     return cv2.erode(image, kernel, iterations = 1)
 
 #opening - erosion followed by dilation
@@ -60,21 +62,26 @@ def resize_frame(src, scale):
     width = int(src.shape[1] * scale / 100)
     height = int(src.shape[0] * scale / 100)
     dsize = (width, height)
-    return cv2.resize(frame, dsize)
+    return cv2.resize(src, dsize)
 
 #applies the filters and cannies it.
 def filter_frame(src):
-    gray = resize_frame(src, 100)
+    gray = resize_frame(src, 90)
     gray = remove_noise(gray)
+    
     #gray = remove_noise(gray)
     
     
     gray = get_grayscale(gray)
     gray = thresholding(gray)
-    #gray = (255 - gray)
     
-    gray = opening(gray)
+    
+    #gray = opening(gray)
+    #gray = opening(gray)
     #gray = erode(gray)
+    
+    gray = (255 - gray)
+    
     return gray
     
 def detect_motion(frame, old_frame):
@@ -94,53 +101,83 @@ def detect_motion(frame, old_frame):
     
     return False
 
-    
-#cv2.imshow('gray',gray)
-#cv2.imshow('threshed', thresh)
-#cv2.imshow('open', opening)
-#cv2.imshow('canny', canny)
-
-cap = cv2.VideoCapture(0)
-ret, old_frame = cap.read()
-frame = old_frame
-
-
-while(True):
-    # Capture frame-by-frame
-    old_frame = frame
-    ret, frame = cap.read()
-
-    # Our operations on the frame come here
-    m_f = frame
-    m_of = old_frame
-    motion_bool = detect_motion(m_f, m_of)
-    canned = filter_frame(frame)
+def d6(total):
+    cap = cv2.VideoCapture(0)
+    ret, old_frame = cap.read()
+    frame = old_frame
+    count_bool = False
+    count = 0
     
 
-    
-    config = r'--oem 3 --psm 6 outputbase digits'
-    # pytessercat
-    text = pytesseract.image_to_string(canned, config=config)
-    text.split('\n')
-    print(text)
-    
-    canny2 = canny(canned)
-    
-    canned = canned[20:400, 100:480]
-    
-    cv2.imshow('canny', canny2)
-    
-    # Display the resulting frame
-    cv2.imshow('ocr',canned)
-    
-    #if motion_bool:
-        #print('motion detected')
-    #else:
-        #print('no motion')
-    
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    while(True):
+        # Capture frame-by-frame
+
+
+        old_frame = frame
+        ret, frame = cap.read()
+
+        # Our operations on the frame come here
+        m_f = frame
+        m_of = old_frame
+        motion_bool = detect_motion(m_f, m_of)
+        canned = filter_frame(frame)
+        
+        #canned = canned[20:400, 100:480]
+        canned = canned[20:400, 100:480]
+        
+        config = r'--oem 3 --psm 6 outputbase digits'
+        # pytessercat
+        text = pytesseract.image_to_string(canned, config=config)
+        if text:
+            text.split('\n')
+            text.replace(" ", "")
+            print(text)
+            print("new set")
+        
+        
+        # Display the resulting frame
+        cv2.imshow('ocr',canned)
+        
+        if motion_bool:
+            count_bool = True
+        
+        if count_bool:
+            count = count + 1
+            if count > 30:
+                
+                text.replace('-', '1')
+                text.replace('-', '1')
+                text.replace('9', '6')
+                die_count = 0
+                num_list = []
+                for x in text:
+                    if (x != '\n') and (x !='\x0c'):
+                        try:
+                            if x == '-':
+                                x = 1
+                            x = int(x)
+                            if x > 0 and x < 7:
+                                num_list.append(x)
+                                die_count = die_count + 1
+                        except ValueError:
+                            print("bad char" + x)
+                if die_count == total:
+                    cap.release()
+                    return num_list
+                
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cap.release()
+            break
+
+dice_selection = {
+    6: d6
+}
+total_dice = 1
+func = dice_selection.get(6, "no")
+final_num = func(total_dice)
+print("final number(s) ")
+print(final_num)
 
 # When everything done, release the capture
-cap.release()
 cv2.destroyAllWindows()
