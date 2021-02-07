@@ -11,6 +11,26 @@ body {
   font-size: 40px;
 }
 
+.retro {
+  background-color: #04005E;
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  border-radius: 3%;
+  -webkit-text-stroke: 1px #f695ff;
+}
+
+.retro h2 {
+  color: #ed22ff;
+  font-size: 40px;
+}
+
+.retro p {
+  color: #e8ccff;
+  font-family: 'Roboto', sans-serif;
+  padding: 3%;
+
+}
+
 .navbar {
   background-color: #1f0b03;
   margin-bottom: 50px;
@@ -82,7 +102,7 @@ body {
 .btn {
   background-color: #1f0b03;
   border-color: #FEDCBA;
-  width: 30%;
+  width: 24%;
 }
 
 .btn:hover {

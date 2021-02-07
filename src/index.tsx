@@ -6,6 +6,7 @@ import Splash from './pages/splash';
 import Settings from './pages/settings';
 import Character from './pages/character';
 import GlobalState from './global_state';
+import Retro from './pages/retro';
 
 Server.init();
 
@@ -62,6 +63,14 @@ export default class Main extends React.Component<IProps, IState> {
 		page = (
 			<Character />
 		);
+	} else if (this.state.location === 3) {
+		page = (
+			<Settings />
+		);
+	} else if (this.state.location === 4) {
+		page = (
+			<Retro />
+		);
 	} else {
 		page = (
 			<Settings />
@@ -76,6 +85,7 @@ export default class Main extends React.Component<IProps, IState> {
 				<a className="btn btn-info" role="button" onClick={()=>this.handlePress(1)}>Dice</a>
 				<a className="btn btn-info" role="button" onClick={()=>this.handlePress(2)}>Character</a>
 				<a className="btn btn-info" role="button" onClick={()=>this.handlePress(3)}>Settings</a>
+				<a className="btn btn-info" role="button" onClick={()=>this.handlePress(4)}>Retro</a>
 				</div>
 			</nav>
 		)
