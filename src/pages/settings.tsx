@@ -51,7 +51,7 @@ export default class Settings extends React.Component<IProps, IState> {
             <div>
                 <div className="container">
                 <div className = "rowForm">
-                    Name:
+                    Player Name:
                         <form onSubmit={(e)=>e.preventDefault()}>
                         <div className="col-xs-12">
                             <label>
@@ -64,7 +64,7 @@ export default class Settings extends React.Component<IProps, IState> {
 
                 <div className="container">
                 <div className = "rowForm">
-                        Room Number:
+                        Campaign Name:
                         <form onSubmit={(e)=>e.preventDefault()}>
                         <div className="col-xs-12">
                             <label>

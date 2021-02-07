@@ -102,6 +102,7 @@ body {
 .btn {
   background-color: #1f0b03;
   border-color: #FEDCBA;
+  font-size:20px;
   width: 24%;
 }
 
@@ -145,4 +146,10 @@ body {
   padding: 10px;
 }
 
+.embed-responsive {
+  font-size: 24px;
+}
 
+.roll-results thead{
+  border-bottom: 1px solid #FEDCBA;
+}
