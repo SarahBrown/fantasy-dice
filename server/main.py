@@ -9,6 +9,7 @@ from controllers.roll_tracker import Roll_tracker
 from functions.dndb_json_to_csv import get_character_json_from_dndb_id
 from json import loads
 from flask_cors import CORS
+from vision.tess_test import get_dice
 
 
 sio = socketio.Server(cors_allowed_origins='*')
@@ -55,7 +56,7 @@ def join_campaign(sid, name, campaign_id, dndbeyond_url):
         #sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), room=campaign_id)
         sio.emit('roll_history', {'roll_history': Roll_tracker.get_roll_history(campaign_id)}, room=campaign_id)
         # send out the str JSON character sheet
-        sio.emit('char_sheet', {'char_sheet': char_sheet_str})
+        sio.emit('char_sheet', {'char_sheet': char_sheet_str}, room=sid)
 
 #@socketio.on('init_roll')
 # when the client presses a button to initiate a roll,
@@ -67,14 +68,16 @@ def join_campaign(sid, name, campaign_id, dndbeyond_url):
 @sio.event
 def init_roll(sid, roll_purpose:str, roll_modifier:int):
     # TODO get link to video stream of dice rolling
-    stream_link = "TEMP.com"
+    stream_link = "localhost" + "/video"
     # identify the campaign to which the player belongs
     campaign_id = Roll_tracker.player_in_campaign[sid]
     # return the link to the stream to all players in that campaign
     #sio.emit('stream_link', stream_link, room=campaign_id)
     sio.emit('stream_link', {'stream_link': stream_link}, room=campaign_id)
-    # TODO send a request to openCV stuff and wait for a reply with the result
-    roll_result = -1
+
+    # send a request to openCV stuff and wait for a reply with the result
+    #roll_result = get_dice(roll_purpose)
+    roll_result = 2
 
     # add the relevant modifier determined from the character sheet by the client
     # and passed to this method.

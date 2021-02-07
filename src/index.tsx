@@ -40,6 +40,13 @@ export default class Main extends React.Component<IProps, IState> {
 			console.log(GlobalState.player_list);
 		});
 
+		Server.get().onEvent("new_roll_result").subscribe((data) => {
+			let temp:any = JSON.parse(data.roll_result);
+			console.log("Received new_roll_result");
+			console.log(temp);
+			GlobalState.recent_results.push(temp);
+		});
+
 		setTimeout(() => {this.setState({location:3, loaded:true})}, 2000);
 	}
 
