@@ -15,7 +15,7 @@ body {
   background-color: #04005E;
   font-family: 'Roboto', sans-serif;
   text-align: center;
-  border-radius: 3%;;
+  border-radius: 3%;
   -webkit-text-stroke: 1px #f695ff;
 }
 
@@ -43,8 +43,10 @@ body {
   margin-bottom: 0;
   font-family: 'Dancing Script', cursive;
   font-size: 48px;
-  background-image: url(assets/tavernBackground3.png);
+  background-image: url(assets/tavernBackground3.PNG);
   background-size: cover;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .navbar{
@@ -71,7 +73,7 @@ body {
   background-color: #FEDCBA;
   color: #1f0b03;
   text-align: center;
-  font-size:20px;
+  font-size:28px;
   padding: 2%;
 }
 
@@ -93,13 +95,14 @@ body {
     border-color: #1f0b03;
     color: #FEDCBA;
     text-align: center;
-    font-size:13px;
+    font-size:28px;
     padding: 0%;
 }
 
 .btn {
   background-color: #1f0b03;
   border-color: #FEDCBA;
+  width: 24%;
 }
 
 .btn:hover {
@@ -120,7 +123,7 @@ body {
 }
 
 .rowForm{
-  font-size:15px;
+  font-size:24px;
   padding:2%;
 }
 
@@ -138,5 +141,8 @@ body {
   border-color: #FEDCBA;
 }
 
+.p-10 {
+  padding: 10px;
+}
 
 

@@ -8,7 +8,7 @@ def total_to_bonus(val):
 
 skills = {
     'acrobatics':'dex',
-    'animal-handling':'wis',
+    'animal_handling':'wis',
     'arcana':'int',
     'athletics':'str',
     'deception':'cha',
@@ -22,15 +22,15 @@ skills = {
     'performance':'cha',
     'persuasion':'cha',
     'religion':'int',
-    'sleight-of-hand':'dex',
+    'sleight_of_hand':'dex',
     'stealth':'dex',
     'survival':'wis',
-    'dexterity-saving-throws':'dex',
-    'strength-saving-throws':'str',
-    'constitution-saving-throws':'con',
-    'intelligence-saving-throws':'int',
-    'wisdom-saving-throws':'wis',
-    'charisma-saving-throws':'cha'
+    'dexterity_saving_throws':'dex',
+    'strength_saving_throws':'str',
+    'constitution_saving_throws':'con',
+    'intelligence_saving_throws':'int',
+    'wisdom_saving_throws':'wis',
+    'charisma_saving_throws':'cha'
 }
 
 def get_character_json_from_dndb_id(dndb_id):
@@ -38,6 +38,7 @@ def get_character_json_from_dndb_id(dndb_id):
         data = json.loads(url.read().decode())['data']
 
         char = {
+            'name':"",
             'abilities':{},
             "skill_bonuses":{x:0 for x in skills},
             'total_level':0,
@@ -45,6 +46,8 @@ def get_character_json_from_dndb_id(dndb_id):
             'initiative_bonus':0,
             "avatar_url": ""
         }
+
+        char['name'] = data['name']
 
         # Calculate total level
         char['total_level'] = sum([plr_class['level'] for plr_class in data['classes']])

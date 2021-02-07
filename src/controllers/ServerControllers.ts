@@ -21,7 +21,7 @@ export class SocketService {
     }
 
     public send(type: string, message: any): void {
-        this.socket.emit(type, message);
+        this.socket.emit(type, ...message);
     }
 
     public onEvent(event: string): Observable<any> {

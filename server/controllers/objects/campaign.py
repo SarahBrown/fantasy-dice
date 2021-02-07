@@ -27,6 +27,7 @@ class Campaign:
     # get a JSON list of the players
     def get_player_list_json(self):
         p_list = []
-        for p in self.players:
+        for p_id in self.players:
+            p = self.players[p_id]
             p_list.append((p.sid, p.name, p.avatar))
         return dumps(p_list)
