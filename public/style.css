@@ -3,6 +3,7 @@ body {
   color: #FEDCBA;
   font-family: 'Shadows Into Light', cursive;
   font-size: 20px;
+  text-align: center;
 }
 
 .h1 {
@@ -43,17 +44,20 @@ body {
   background-color: #1f0b03;
   text-align: center;
   font-size:15px;
+  margin:0%;
 }
 
 .panel-heading{
   background-color: #FEDCBA;
   color: #1f0b03;
   text-align: center;
-  font-size:15px;
+  font-size:20px;
+  padding: 2%;
 }
 
 .panel-warning{
-  border-color: #FEDCBA;
+  border-color: #1f0b03;
+  padding: 0%;
 }
 
 .panel-warning .panel-heading{
@@ -61,6 +65,16 @@ body {
     color: #1f0b03;
     text-align: center;
     font-size:15px;
+    padding: 0%;
+}
+
+.panel-warning .panel-body{
+    background-color: #1f0b03;
+    border-color: #1f0b03;
+    color: #FEDCBA;
+    text-align: center;
+    font-size:13px;
+    padding: 0%;
 }
 
 .btn {
@@ -83,6 +97,25 @@ body {
 .list-group-item {
   background-color: #1f0b03;
   margin: 5%;
+}
+
+.rowForm{
+  font-size:15px;
+  padding:2%;
+}
+
+.rowForm label{
+  background-color: #1f0b03;
+  color: #FEDCBA;
+}
+
+.rowForm input{
+  background-color: #FEDCBA;
+  color: #1f0b03;
+}
+
+.embed-responsive-item{
+  border-color: #FEDCBA;
 }
 
 
