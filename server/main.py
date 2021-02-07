@@ -62,7 +62,7 @@ def init_roll(sid, roll_purpose:str, roll_modifier:int):
     Roll_tracker.receive_roll(sid, roll_purpose, roll_result)
     # send new roll history to update the chat display
     #sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), room=campaign_id)
-    emit('roll_history', {'roll_history': Roll_tracker.get_roll_history(campaign_id)}, room=campaign_id)
+    emit('roll_history', {'roll_hist': Roll_tracker.get_roll_history(campaign_id)}, room=campaign_id)
 
 @socketio.on('join_campaign')
 # campaigns are rooms
@@ -75,7 +75,7 @@ def join_campaign(sid, name, campaign_id):
         # create player and assign to campaign
         Roll_tracker.join_campaign(sid, name, campaign_id)
         # put up the roll history and list of players
-        sio.join_room(sid, campaign_id)
+        #sio.join_room(sid, campaign_id)
         #sio.emit('joined_campaign', campaign=campaign_id, player=sid)
         emit('joined_campaign', {'campaign_id': campaign_id, "player": sid}, room=campaign_id)
         #sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), room=campaign_id)

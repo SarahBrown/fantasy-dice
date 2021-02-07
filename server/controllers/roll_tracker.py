@@ -1,6 +1,7 @@
 from typing import List, Tuple
 from objects.player import Player
 from objects.campaign import Campaign
+from json import dumps
 
 class Roll_tracker:
     # dict mapping campaign_id to Campaign object
@@ -56,11 +57,13 @@ class Roll_tracker:
 
     @staticmethod
     def get_roll_history(campaign_id):
-        return Roll_tracker.campaigns[campaign_id].roll_history
+        hist_ls = Roll_tracker.campaigns[campaign_id].roll_history
+        # convert list to json
+        return dumps(hist_ls)
     
     @staticmethod
     def get_player_list(campaign_id):
-        return Roll_tracker.campaigns[campaign_id].players
+        return Roll_tracker.campaigns[campaign_id].get_player_list_json()
     
     @staticmethod
     def reset():

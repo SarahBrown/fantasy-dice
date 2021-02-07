@@ -1,4 +1,5 @@
 from player import Player
+from json import dumps
 
 class Campaign:
     # object to store campaign name, list of players, and roll history
@@ -26,3 +27,10 @@ class Campaign:
 
     def __str__(self):
         return "Campaign Name: " + self.campaign_name + "\nPlayers: " + str(self.players) + "\nRoll History: " + str(self.roll_history)
+
+    # get a JSON list of the players
+    def get_player_list_json(self):
+        p_list = []
+        for p in self.players:
+            p_list.append((p.sid, p.name))
+        return dumps(p_list)
