@@ -47,7 +47,7 @@ def join_campaign(sid, name, campaign_id, dndbeyond_url):
         # create player and assign to campaign
         Roll_tracker.join_campaign(sid, name, campaign_id, avatar_url)
         # put up the roll history and list of players
-        #sio.join_room(sid, campaign_id)
+        sio.enter_room(sid, campaign_id)
         #sio.emit('joined_campaign', campaign=campaign_id, player=sid)
         sio.emit('joined_campaign', {'campaign_id': campaign_id, "player": sid}, room=campaign_id)
         #sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), room=campaign_id)
@@ -102,7 +102,8 @@ def disconnect(sid):
         Roll_tracker.remove_player(sid)
         # update the player list display
         #sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), room=campaign_id)
-        sio.emit('player_list', {'player_list': Roll_tracker.get_player_list(campaign_id)}, room=campaign_id)
+        if Roll_tracker.does_campaign_exist(campaign_id):
+            sio.emit('player_list', {'player_list': Roll_tracker.get_player_list(campaign_id)}, room=campaign_id)
 
 # def gen():
 #     while True:

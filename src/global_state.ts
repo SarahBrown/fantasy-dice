@@ -3,6 +3,7 @@
 
 export default class GlobalState {
     public static player_character: any = null;
+    public static player_list: any = null;
     public static player_portaits: string[] = [];
 
     public static mod_from_total(total: number) {

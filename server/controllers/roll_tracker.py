@@ -29,23 +29,20 @@ class Roll_tracker:
         # keep record of which campaign a player is in
         Roll_tracker.player_in_campaign[sid] = campaign_id
 
-        print(Roll_tracker.campaigns)
-        print(Roll_tracker.player_in_campaign)
-
     @staticmethod
     # remove a player from everything when they disconnect.
     # don't remove their previous rolls from a campaign's roll history.
     def remove_player(sid):
         # figure out which campaign this player is in
-        campaign = Roll_tracker.player_in_campaign[sid]
+        campaign_id = Roll_tracker.player_in_campaign[sid]
         # remove the player from the list of (sid, campaign)
         del Roll_tracker.player_in_campaign[sid]
         # remove the player from their campaign's list of players
-        campaign.remove_player(sid)
+        Roll_tracker.campaigns[campaign_id].remove_player(sid)
 
         # if no one is left in the campaign, delete it
-        if len(Roll_tracker.campaigns[campaign].players) < 1:
-            del Roll_tracker.campaigns[campaign]
+        if len(Roll_tracker.campaigns[campaign_id].players) < 1:
+            del Roll_tracker.campaigns[campaign_id]
 
     @staticmethod
     # get a new roll to be added to the history and displayed to everyone in the chat
@@ -64,6 +61,10 @@ class Roll_tracker:
     @staticmethod
     def get_player_list(campaign_id):
         return Roll_tracker.campaigns[campaign_id].get_player_list_json()
+
+    @staticmethod
+    def does_campaign_exist(campaign_id):
+        return campaign_id in Roll_tracker.campaigns
     
     @staticmethod
     def reset():

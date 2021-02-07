@@ -33,6 +33,12 @@ export default class Main extends React.Component<IProps, IState> {
 			console.log(GlobalState.player_character);
         });
 
+		Server.get().onEvent("player_list").subscribe((data) => {
+			GlobalState.player_list = JSON.parse(data.player_list);
+			console.log("Received player_list");
+			console.log(GlobalState.player_list);
+		});
+
 		setTimeout(() => {this.setState({location:3, loaded:true})}, 2000);
 	}
 
@@ -48,7 +54,7 @@ export default class Main extends React.Component<IProps, IState> {
 		page = (
 			<Splash />
 		);
-	} else if (this.state.location === 1) {
+	} else if (this.state.location === 1 && GlobalState.player_list != null) {
 		page = (
 			<Dice />
 		);
