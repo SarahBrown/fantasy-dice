@@ -10,7 +10,7 @@ socket.on('connect', () => {
     campaign_id = "mygame";
     player_name = "jorge";
     dndb_url = "www.example/123456"
-    socket.emit('join_campaign', {"name":player_name, "campaign_id":campaign_id});
+    socket.emit('join_campaign', {"name":player_name, "campaign_id":campaign_id, "dndbeyond_url":dndb_url});
     socket.emit('dndbeyond_url', {"url":dndb_url})
   });
 
@@ -20,7 +20,7 @@ socket.on('char_sheet', (char_sheet_json) => {
   });
 
 socket.on('player_list', (player_list) => {
-    // player_list is list of tuples (sid, name) dumped to JSON
+    // player_list is list of tuples (sid, name, avatar URL) dumped to JSON
     // could change to just list of names if we don't need sid
     player_ls = player_list
   });

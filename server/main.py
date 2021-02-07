@@ -1,38 +1,52 @@
-from makeup_artist import Makeup_artist
 from flask import Flask, render_template, Response
 from flask_socketio import SocketIO, emit
-from camera import Camera
-from utils import base64_to_pil_image, pil_image_to_base64
 #import eventlet
 #import socketio
 from controllers.roll_tracker import Roll_tracker
 from functions.dndb_json_to_csv import get_character_json_from_dndb_id
+from json import loads
 
 # sio = socketio.Server(cors_allowed_origins='*')
 # app = socketio.WSGIApp(sio)
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-camera = Camera(Makeup_artist())
 
 @socketio.on('connect')
 def connect(sid, environ): 
     print('connect ', sid)
-    # users will be asked their name before being allowed to connect
 
-@socketio.on('dndbeyond_url')
-def get_char_sheet(sid, url:str):
-    # identify the campaign to which the player belongs
-    campaign_id = Roll_tracker.player_in_campaign[sid]
-    # we need the numbers at the end of the URL.
-    # first make sure there isn't a / at the very end
-    url.strip("/")
-    # isolate the user ID
-    user_id = int(url[url.rfind("/"):])
-    # call Noah's script to generate a JSON char sheet from the 
-    #   DND Beyond profile, and emit it back to the client.
-    char_sheet_json = get_character_json_from_dndb_id(user_id)
-    emit('char_sheet', {'char_sheet': char_sheet_json}, room=campaign_id)
+@socketio.on('join_campaign')
+# campaigns are rooms
+def join_campaign(sid, name, campaign_id, dndbeyond_url):
+    # make sure player name and campaign are alphanumeric and within the allowed lengths
+    if str.isalnum(name) and str.isalnum(campaign_id) and 2 < len(name) < 12 and 2 < len(campaign_id) < 12:
+        # lowercase campaign to make it easy to type
+        campaign_id = str.lower(campaign_id)
+        print('received_player_info ', sid)
+        # we need the numbers at the end of the URL for the player's DnD Beyond ID.
+        # first make sure there isn't a / at the very end
+        dndbeyond_url.strip("/")
+        # isolate the user ID
+        user_id = int(dndbeyond_url[dndbeyond_url.rfind("/"):])
+        # call Noah's script to generate a JSON char sheet from the DND Beyond profile
+        char_sheet_str = get_character_json_from_dndb_id(user_id)
+        # convert this string to an actual json object
+        char_sheet_json = loads(char_sheet_str)
+        # grab the avatar URL from the char sheet
+        avatar_url = char_sheet_json["avatar_url"] #TODO check this variable name
+        # create player and assign to campaign
+        Roll_tracker.join_campaign(sid, name, campaign_id, avatar_url)
+        # put up the roll history and list of players
+        #sio.join_room(sid, campaign_id)
+        #sio.emit('joined_campaign', campaign=campaign_id, player=sid)
+        emit('joined_campaign', {'campaign_id': campaign_id, "player": sid}, room=campaign_id)
+        #sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), room=campaign_id)
+        emit('player_list', {'player_list': Roll_tracker.get_player_list(campaign_id)}, room=campaign_id)
+        #sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), room=campaign_id)
+        emit('roll_history', {'roll_history': Roll_tracker.get_roll_history(campaign_id)}, room=campaign_id)
+        # send out the str JSON character sheet
+        emit('char_sheet', {'char_sheet': char_sheet_str}, room=campaign_id)
 
 @socketio.on('init_roll')
 # when the client presses a button to initiate a roll,
@@ -62,26 +76,9 @@ def init_roll(sid, roll_purpose:str, roll_modifier:int):
     Roll_tracker.receive_roll(sid, roll_purpose, roll_result)
     # send new roll history to update the chat display
     #sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), room=campaign_id)
-    emit('roll_history', {'roll_hist': Roll_tracker.get_roll_history(campaign_id)}, room=campaign_id)
+    emit('roll_history', {'roll_history': Roll_tracker.get_roll_history(campaign_id)}, room=campaign_id)
 
-@socketio.on('join_campaign')
-# campaigns are rooms
-def join_campaign(sid, name, campaign_id):
-    # make sure player name and campaign are alphanumeric and within the allowed lengths
-    if str.isalnum(name) and str.isalnum(campaign_id) and 2 < len(name) < 12 and 2 < len(campaign_id) < 12:
-        # lowercase campaign to make it easy to type
-        campaign_id = str.lower(campaign_id)
-        print('received_name ', sid)
-        # create player and assign to campaign
-        Roll_tracker.join_campaign(sid, name, campaign_id)
-        # put up the roll history and list of players
-        #sio.join_room(sid, campaign_id)
-        #sio.emit('joined_campaign', campaign=campaign_id, player=sid)
-        emit('joined_campaign', {'campaign_id': campaign_id, "player": sid}, room=campaign_id)
-        #sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), room=campaign_id)
-        emit('player_list', {'player_list': Roll_tracker.get_player_list(campaign_id)}, room=campaign_id)
-        #sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), room=campaign_id)
-        emit('roll_history', {'roll_history': Roll_tracker.get_roll_history(campaign_id)}, room=campaign_id)
+
 
 @socketio.on('disconnect')
 def disconnect(sid):

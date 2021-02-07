@@ -23,14 +23,10 @@ class Campaign:
     # this should update the chat feed with the new roll info as well.
     def new_roll(self, player_sid, roll_purpose:str, roll_result:int):
         self.roll_history.append((self.players[player_sid].name, roll_purpose, roll_result))
-        # TODO update the chat feed
-
-    def __str__(self):
-        return "Campaign Name: " + self.campaign_name + "\nPlayers: " + str(self.players) + "\nRoll History: " + str(self.roll_history)
-
+    
     # get a JSON list of the players
     def get_player_list_json(self):
         p_list = []
         for p in self.players:
-            p_list.append((p.sid, p.name))
+            p_list.append((p.sid, p.name, p.avatar))
         return dumps(p_list)

@@ -10,14 +10,14 @@ class Roll_tracker:
     player_in_campaign = {}
 
     @staticmethod
-    def join_campaign(sid, name, campaign_id):
+    def join_campaign(sid, name, campaign_id, avatar_url):
 
         # player is already in a campaign, but we shouldn't see this happen
         if sid in Roll_tracker.player_in_campaign:
             return
         
         # make the player object
-        new_player = Player(sid, name)
+        new_player = Player(sid, name, avatar_url)
 
         # if the campaign doesn't exist, make it & add to dict of campaigns
         if not campaign_id in Roll_tracker.campaigns:
