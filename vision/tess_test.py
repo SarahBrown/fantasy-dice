@@ -1,7 +1,10 @@
 import cv2
 import numpy as np
 
-img = cv2.imread('image.jpg')
+import pytesseract
+from pytesseract import Output
+
+#img = cv2.imread('image.jpg')
 
 # get grayscale image
 def get_grayscale(image):
@@ -17,7 +20,7 @@ def thresholding(image):
 
 #dilation
 def dilate(image):
-    kernel = np.ones((5,5),np.uint8)
+    kernel = np.ones((3,3),np.uint8)
     return cv2.dilate(image, kernel, iterations = 1)
     
 #erosion
@@ -27,7 +30,7 @@ def erode(image):
 
 #opening - erosion followed by dilation
 def opening(image):
-    kernel = np.ones((5,5),np.uint8)
+    kernel = np.ones((3,3),np.uint8)
     return cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
 
 #canny edge detection
@@ -61,10 +64,18 @@ def resize_frame(src, scale):
 
 #applies the filters and cannies it.
 def filter_frame(src):
-    gray = get_grayscale(frame)
-    gray = resize_frame(gray, 75)
-    canned = canny(gray)
-    return canned
+    gray = resize_frame(src, 100)
+    gray = remove_noise(gray)
+    #gray = remove_noise(gray)
+    
+    
+    gray = get_grayscale(gray)
+    gray = thresholding(gray)
+    #gray = (255 - gray)
+    
+    gray = opening(gray)
+    #gray = erode(gray)
+    return gray
     
 def detect_motion(frame, old_frame):
     gray = get_grayscale(frame)
@@ -75,6 +86,7 @@ def detect_motion(frame, old_frame):
     
     delta = cv2.absdiff(gray, gray_2)
     threshold=cv2.threshold(delta,35,255, cv2.THRESH_BINARY)[1]
+    
     
     contours, x =cv2.findContours(threshold,cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     if contours:
@@ -92,6 +104,7 @@ cap = cv2.VideoCapture(0)
 ret, old_frame = cap.read()
 frame = old_frame
 
+
 while(True):
     # Capture frame-by-frame
     old_frame = frame
@@ -103,13 +116,27 @@ while(True):
     motion_bool = detect_motion(m_f, m_of)
     canned = filter_frame(frame)
     
-    # Display the resulting frame
-    cv2.imshow('canny',canned)
+
     
-    if motion_bool:
-        print('motion detected')
-    else:
-        print('no motion')
+    config = r'--oem 3 --psm 6 outputbase digits'
+    # pytessercat
+    text = pytesseract.image_to_string(canned, config=config)
+    text.split('\n')
+    print(text)
+    
+    canny2 = canny(canned)
+    
+    canned = canned[20:400, 100:480]
+    
+    cv2.imshow('canny', canny2)
+    
+    # Display the resulting frame
+    cv2.imshow('ocr',canned)
+    
+    #if motion_bool:
+        #print('motion detected')
+    #else:
+        #print('no motion')
     
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
