@@ -83,6 +83,54 @@ def filter_frame(src):
     gray = (255 - gray)
     
     return gray
+
+#applies the filters and cannies it.
+def filter_frame_d20(src):
+    cv2.imshow("orig", src)
+    gray = resize_frame(src, 100)
+    #gray = remove_noise(gray)
+    
+    #gray = remove_noise(gray)
+    
+    
+
+    gray = get_grayscale(gray)
+    
+    cv2.imshow("Grayscale", gray)
+
+    gray = gray * 3
+
+    cv2.imshow("scaled gray", gray)
+
+    gray = cv2.GaussianBlur(gray, (5,5),0)
+
+    cv2.imshow("blur", gray)
+
+    thr = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV,17,2)
+    
+    cv2.imshow("threshold 1", thr)
+
+    gray = (255 - gray)
+    thr = thr * 2 + (gray)
+
+    cv2.imshow("addition", thr)
+
+    thr = cv2.threshold(thr, 50, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    #thr = thr  gray
+    cv2.imshow("threshhold 2", thr)
+    thr = dilate(thr)
+    thr = erode(thr)
+    #thr = erode(thr)
+    
+    gray = cv2.threshold(thr, 50, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
+    cv2.imshow("threshold 3", gray)
+    
+    #thr = 255 - thr
+    
+    thr =  gray + thr 
+    
+    return thr 
     
 def detect_motion(frame, old_frame):
     gray = get_grayscale(frame)
@@ -170,11 +218,81 @@ def d6(total):
             cap.release()
             break
 
+def d20(total):
+    cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_EXPOSURE, 40) 
+    ret, old_frame = cap.read()
+    frame = old_frame
+    count_bool = False
+    count = 0
+    
+
+    while(True):
+        # Capture frame-by-frame
+
+
+        old_frame = frame
+        ret, frame = cap.read()
+
+        # Our operations on the frame come here
+        m_f = frame
+        m_of = old_frame
+        motion_bool = detect_motion(m_f, m_of)
+        canned = filter_frame_d20(frame)
+        
+
+        #canned = canned[20:400, 100:480]
+        canned = canned[20:400, 100:480]
+        
+        config = r'--oem 3 --psm 6 outputbase digits'
+        # pytessercat
+        text = pytesseract.image_to_string(canned, config=config)
+        if text:
+            text.split('\n')
+            text.replace(" ", "")
+            print(text)
+            print("new set")
+        
+        
+        # Display the resulting frame
+        cv2.imshow('ocr',canned)
+        
+        if motion_bool:
+            count_bool = True
+        
+        if count_bool:
+            count = count + 1
+            if count > 30:
+                
+                text.replace('-', '1')
+                text.replace('-', '1')
+                die_count = 0
+                num_list = []
+                x = text
+                try:
+                    if x == '-':
+                        x = 1
+                    x = int(x)
+                    if x > 0 and x < 21:
+                        num_list.append(x)
+                        die_count = die_count + 1
+                except ValueError:
+                    print("bad char" + x)
+                if die_count == total:
+                    cap.release()
+                    return num_list
+                
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cap.release()
+            break
+
 dice_selection = {
-    6: d6
+    6: d6,
+    20: d20
 }
 total_dice = 1
-func = dice_selection.get(6, "no")
+func = dice_selection.get(20, "no")
 final_num = func(total_dice)
 print("final number(s) ")
 print(final_num)
