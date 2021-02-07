@@ -1,4 +1,4 @@
-from player import Player
+from controllers.objects.player import Player
 from json import dumps
 
 class Campaign:
