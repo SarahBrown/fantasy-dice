@@ -6,6 +6,7 @@ from utils import base64_to_pil_image, pil_image_to_base64
 #import eventlet
 #import socketio
 from controllers.roll_tracker import Roll_tracker
+from functions.dndb_json_to_csv import get_character_json_from_dndb_id
 
 # sio = socketio.Server(cors_allowed_origins='*')
 # app = socketio.WSGIApp(sio)
@@ -23,15 +24,14 @@ def connect(sid, environ):
 def get_char_sheet(sid, url:str):
     # identify the campaign to which the player belongs
     campaign_id = Roll_tracker.player_in_campaign[sid]
-    # we need the numbers at the end of the URL
-    # make sure there isn't a / at the very end
-    if url[-1] == "/":
-        url = url[:len(url)-1]
-    # strip out the user ID
+    # we need the numbers at the end of the URL.
+    # first make sure there isn't a / at the very end
+    url.strip("/")
+    # isolate the user ID
     user_id = int(url[url.rfind("/"):])
-    # TODO call Noah's script to generate a JSON char sheet from their 
+    # call Noah's script to generate a JSON char sheet from the 
     #   DND Beyond profile, and emit it back to the client.
-    char_sheet_json = None
+    char_sheet_json = get_character_json_from_dndb_id(user_id)
     emit('char_sheet', {'char_sheet': char_sheet_json}, room=campaign_id)
 
 @socketio.on('init_roll')
