@@ -146,4 +146,10 @@ body {
   padding: 10px;
 }
 
+.embed-responsive {
+  font-size: 24px;
+}
 
+.roll-results thead{
+  border-bottom: 1px solid #FEDCBA;
+}

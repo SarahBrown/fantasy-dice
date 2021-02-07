@@ -1,10 +1,11 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request
 from flask_socketio import SocketIO, emit
 import json
 import random
 import logging
 import eventlet
 import socketio
+import time
 from controllers.roll_tracker import Roll_tracker
 from functions.dndb_json_to_csv import get_character_json_from_dndb_id
 from json import loads
@@ -13,12 +14,9 @@ from vision.tess_test import get_dice
 
 
 sio = socketio.Server(cors_allowed_origins='*')
-app = socketio.WSGIApp(sio)
-
-# app = Flask(__name__)
-# socketio = SocketIO(app, cors_allowed_origins="*")
-# CORS(app)
-
+app2 = Flask(__name__)
+CORS(app2)
+app = socketio.WSGIApp(sio, app2)
 
 #@socketio.on('connect')
 @sio.event
@@ -30,7 +28,7 @@ def connect(sid, environ):
 @sio.event
 def join_campaign(sid, name, campaign_id, dndbeyond_url):
     # make sure player name and campaign are alphanumeric and within the allowed lengths
-    if str.isalnum(name) and str.isalnum(campaign_id) and 2 < len(name) < 12 and 2 < len(campaign_id) < 12:
+    if str.isalnum(name) and str.isalnum(campaign_id) and 2 < len(name) < 40 and 2 < len(campaign_id) < 40:
         # lowercase campaign to make it easy to type
         campaign_id = str.lower(campaign_id)
         print('received_player_info ', sid)
@@ -58,6 +56,10 @@ def join_campaign(sid, name, campaign_id, dndbeyond_url):
         # send out the str JSON character sheet
         sio.emit('char_sheet', {'char_sheet': char_sheet_str}, room=sid)
 
+# These are bad but just trying to make this work rn okay
+current_cam_campaign = None
+current_roll_info = []
+
 #@socketio.on('init_roll')
 # when the client presses a button to initiate a roll,
 # the client code uses the char sheet to tell them what dice to roll.
@@ -67,31 +69,21 @@ def join_campaign(sid, name, campaign_id, dndbeyond_url):
 # & update the roll history.
 @sio.event
 def init_roll(sid, roll_purpose:str, roll_modifier:int):
+    global current_cam_campaign, current_roll_info
+    current_roll_info = [sid, roll_purpose, roll_modifier]
     # TODO get link to video stream of dice rolling
     stream_link = "localhost" + "/video"
     # identify the campaign to which the player belongs
     campaign_id = Roll_tracker.player_in_campaign[sid]
+
+    current_cam_campaign = campaign_id
+    roll_purpose_global = roll_purpose
+
     # return the link to the stream to all players in that campaign
     #sio.emit('stream_link', stream_link, room=campaign_id)
     sio.emit('stream_link', {'stream_link': stream_link}, room=campaign_id)
 
     # send a request to openCV stuff and wait for a reply with the result
-    #roll_result = get_dice(roll_purpose)
-    roll_result = 2
-
-    # add the relevant modifier determined from the character sheet by the client
-    # and passed to this method.
-    roll_result += roll_modifier
-    # send the result of the roll to the client for a special display
-    #sio.emit('new_roll_result', roll_result, campaign=campaign_id)
-    sio.emit('new_roll_result', {'roll_result': roll_result}, room=campaign_id)
-    # add the new roll to the campaign's roll history
-    Roll_tracker.receive_roll(sid, roll_purpose, roll_result)
-    # send new roll history to update the chat display
-    #sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), room=campaign_id)
-    sio.emit('roll_history', {'roll_history': Roll_tracker.get_roll_history(campaign_id)}, room=campaign_id)
-
-
 
 #@socketio.on('disconnect')
 @sio.event
@@ -107,6 +99,35 @@ def disconnect(sid):
         #sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), room=campaign_id)
         if Roll_tracker.does_campaign_exist(campaign_id):
             sio.emit('player_list', {'player_list': Roll_tracker.get_player_list(campaign_id)}, room=campaign_id)
+
+@app2.route('/test/<int:roll_val>/<int:roll2_val>')
+def hello_world(roll_val, roll2_val):
+    global current_cam_campaign, current_roll_info
+    if current_cam_campaign is not None:
+        campaign_id = current_cam_campaign
+        sid = current_roll_info[0]
+        roll_purpose = current_roll_info[1]
+        roll_modifier = current_roll_info[2] 
+
+        #roll_result = get_dice(roll_purpose)
+        roll_result = roll_val + roll2_val
+
+        # add the relevant modifier determined from the character sheet by the client
+        # and passed to this method.
+        roll_result += roll_modifier
+
+        # send the result of the roll to the client for a special display
+        #sio.emit('new_roll_result', roll_result, campaign=campaign_id)
+        sio.emit('new_roll_result', {'roll_result': roll_result}, room=campaign_id)
+        # add the new roll to the campaign's roll history
+        Roll_tracker.receive_roll(sid, roll_purpose + "+" + str(roll_modifier), roll_result)
+        # send new roll history to update the chat display
+        #sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), room=campaign_id)
+        sio.emit('roll_history', {'roll_history': Roll_tracker.get_roll_history(campaign_id)}, room=campaign_id)
+        current_cam_campaign = None
+        return 'ok'
+    else:
+        return 'no info but ok'
 
 # def gen():
 #     while True:

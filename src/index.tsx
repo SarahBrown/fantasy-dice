@@ -40,11 +40,21 @@ export default class Main extends React.Component<IProps, IState> {
 			console.log(GlobalState.player_list);
 		});
 
-		Server.get().onEvent("new_roll_result").subscribe((data) => {
-			let temp:any = JSON.parse(data.roll_result);
-			console.log("Received new_roll_result");
+		Server.get().onEvent("roll_history").subscribe((data) => {
+			let temp:any = JSON.parse(data.roll_history);
+			console.log("Received roll_history");
 			console.log(temp);
-			GlobalState.recent_results.push(temp);
+			GlobalState.recent_results = temp;
+		});
+
+		Server.get().onEvent("new_roll_result").subscribe(() => {
+			console.log("Received new_roll_result");
+			GlobalState.cam_enabled = false;
+		});
+	
+		Server.get().onEvent("stream_link").subscribe(() => {
+			console.log("Received stream_link");
+			GlobalState.cam_enabled = true;
 		});
 
 		setTimeout(() => {this.setState({location:3, loaded:true})}, 2000);
