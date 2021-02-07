@@ -11,6 +11,34 @@ def connect(sid, environ):
     # users will be asked their name before being allowed to connect
 
 @sio.event
+# when the client presses a button to initiate a roll,
+# the client code uses the char sheet to tell them what dice to roll.
+# it then tells the server (us) that a roll is happening, and we 
+# need to tell the openCV code to init. When the openCV gets the result,
+# they send it back to the server (us) and we announce the roll 
+# & update the roll history.
+def init_roll(sid, roll_purpose:str, roll_modifier:int):
+    # TODO get link to video stream of dice rolling
+    stream_link = "TEMP.com"
+    # identify the campaign to which the player belongs
+    campaign_id = Roll_tracker.player_in_campaign[sid]
+    # return the link to the stream to all players in that campaign
+    sio.emit('stream_link', stream_link, campaign=campaign_id)
+    # TODO send a request to openCV stuff and wait for a reply with the result
+    roll_result = -1
+
+    # add the relevant modifier determined from the character sheet by the client
+    # and passed to this method.
+    roll_result += roll_modifier
+    # send the result of the roll to the client for a special display
+    sio.emit('new_roll_result', roll_result, campaign=campaign_id)
+    # add the new roll to the campaign's roll history
+    Roll_tracker.receive_roll(sid, roll_purpose, roll_result)
+    # send new roll history to update the chat display
+    sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), campaign=campaign_id)
+
+
+@sio.event
 # campaigns are rooms
 def join_campaign(sid, name, campaign_id):
     # make sure player name and campaign are alphanumeric and within the allowed lengths
@@ -25,40 +53,6 @@ def join_campaign(sid, name, campaign_id):
         sio.emit('joined_campaign', campaign=campaign_id, player=sid)
         sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), campaign=campaign_id)
         sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), campaign=campaign_id)
-
-# @sio.event
-# def start(sid):
-#     campaign_id = Roll_tracker.player_in_campaign[sid]
-#     print('starting')
-    # # don't allow start game until certain number of players are in
-    # min_players = 1
-    # if len(Roll_tracker.campaigns[campaign_id].players) >= min_players: 
-    #     # Do stuff to start the game
-
-@sio.event
-# a player has initiated a roll. we have their SID,
-# the roll purpose (DEX save, attack roll, etc),
-# and mod in {1:advantage, -1:disadvantage, 0:neither}
-def receive_roll_request(sid, roll_purpose:str, mod:int):
-    print('received_roll_request ', sid)
-    # TODO use character sheet to inform rolls + modifiers
-    # TODO make method for creating a new roll template
-    # TODO receive advantage, disad, or neither
-
-    # TODO tell the user what kind of roll to make based on roll_purpose & char sheet.
-    #   don't need to tell them modifiers, just the dice, since we handle that here
-
-    # TODO have the user make the roll and get the result, or compute it ourselves
-    roll_result = None
-
-    # identify the campaign to which the player belongs
-    campaign_id = Roll_tracker.player_in_campaign[sid]
-    # send the result of the roll for a special display
-    sio.emit('new_roll_result', roll_result, campaign=campaign_id)
-    # add the new roll to the campaign's roll history
-    Roll_tracker.receive_roll(sid, roll_purpose, roll_result)
-    # send new roll history to update the chat display
-    sio.emit('roll_history', Roll_tracker.get_roll_history(campaign_id), campaign=campaign_id)
 
 @sio.event
 def disconnect(sid):
