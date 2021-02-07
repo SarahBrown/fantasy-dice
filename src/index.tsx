@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Server from './controllers/ServerControllers';
+import Dice from './pages/dice';
 
 Server.init();
 
-// ReactDOM.render(<SubmitForm />, document.getElementById('textBoxFiller'));
+ReactDOM.render(<Dice />, document.getElementById('root'));
