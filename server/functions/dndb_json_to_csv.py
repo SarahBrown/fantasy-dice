@@ -33,7 +33,7 @@ skills = {
     'charisma-saving-throws':'cha'
 }
 
-def get_character_json_from_dndb_id(dndb_id)
+def get_character_json_from_dndb_id(dndb_id):
     with urllib.request.urlopen("https://ddb-character.vttassets.com/" + str(dndb_id)) as url:
         data = json.loads(url.read().decode())['data']
 
@@ -42,7 +42,8 @@ def get_character_json_from_dndb_id(dndb_id)
             "skill_bonuses":{x:0 for x in skills},
             'total_level':0,
             'proficiency_bonus':2,
-            'initiative_bonus':0
+            'initiative_bonus':0,
+            "avatar_url": ""
         }
 
         # Calculate total level
@@ -109,5 +110,10 @@ def get_character_json_from_dndb_id(dndb_id)
             if has_half_prof and char['skill_bonuses'][skill_name] == 0:
                 char['skill_bonuses'][skill_name] = int(char['proficiency_bonus'] / 2)
             char['skill_bonuses'][skill_name] += total_to_bonus(char['abilities'][skills[skill_name]])
+
+        if data['avatarUrl'] is not None:
+            char['avatar_url'] = data['avatarUrl']
+        else:
+            char['avatar_url'] = data['race']['portraitAvatarUrl']
 
         return char

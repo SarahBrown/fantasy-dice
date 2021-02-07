@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from objects.player import Player
-from objects.campaign import Campaign
+from controllers.objects.player import Player
+from controllers.objects.campaign import Campaign
 from json import dumps
 
 class Roll_tracker:

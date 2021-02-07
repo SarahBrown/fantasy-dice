@@ -1,5 +1,6 @@
 from flask import Flask, render_template, Response
 from flask_socketio import SocketIO, emit
+import random
 #import eventlet
 #import socketio
 from controllers.roll_tracker import Roll_tracker
@@ -92,6 +93,17 @@ def disconnect(sid):
         # update the player list display
         #sio.emit('player_list', Roll_tracker.get_player_list(campaign_id), room=campaign_id)
         emit('player_list', {'player_list': Roll_tracker.get_player_list(campaign_id)}, room=campaign_id)
+
+def gen():
+    while True:
+        with open("test" + str(random.randint(1,3)) + ".jpg","rb") as f:
+            yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + f.read() + b'\r\n')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
     #eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
