@@ -10,6 +10,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -36,7 +37,12 @@
     </div>
 
     <div class="container">
-        <div class="row">
+        <div class="col text-center">        
+            <button data-toggle="collapse" data-target="#bonus" class="btn-collapse">Modifiers</button>
+        </div>
+        <br>
+
+        <div id="bonus" class="row">
             <div class="col-xs-6">
                 <div class="panel panel-warning">
                     <div class="panel-heading">Strength</div>
@@ -128,9 +134,14 @@
         </div>
     </div><br>
 
-    <div class="container-fluid">
-        <div class="panel panel-warning">
-            <div class="panel-heading">Skill Bonuses</div>
+    <div class="container">
+        <div class="col text-center">        
+            <button data-toggle="collapse" data-target="#bonusSkill" class="btn-collapse">Skill Bonuses</button>
+        </div>
+        <br>
+
+        <div id="bonusSkill" class="panel-collapse collapse">
+            <div class="panel-heading"></div>
                     <row>
                         <div class="panel panel-warning col-xs-6">
                             <div class="panel-body">Acrobatics</div>
