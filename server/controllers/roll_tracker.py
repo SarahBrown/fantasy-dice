@@ -21,7 +21,7 @@ class Roll_tracker:
 
         # if the campaign doesn't exist, make it & add to dict of campaigns
         if not campaign_id in Roll_tracker.campaigns:
-            Roll_tracker.campaigns[campaign_id] = Campaign([new_player], campaign_id)
+            Roll_tracker.campaigns[campaign_id] = Campaign(new_player, campaign_id)
         # if the campaign already exists, add the player
         else:
             Roll_tracker.campaigns[campaign_id].add_player(new_player)

@@ -7,7 +7,7 @@ export class SocketService {
     private socket!: SocketIOClient.Socket;
 
     public constructor() {
-        SERVER_URL = window.location.hostname + ":5000";
+        //SERVER_URL = window.location.hostname + ":5000";
         //SERVER_URL = "34.70.217.218:5000"; //HORRIBLE hacky solution
         this.socket = socketIo(SERVER_URL);
     }
@@ -21,7 +21,7 @@ export class SocketService {
     }
 
     public send(type: string, message: any): void {
-        this.socket.emit(type, message);
+        this.socket.emit(type, ...message);
     }
 
     public onEvent(event: string): Observable<any> {
