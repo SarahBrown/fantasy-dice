@@ -1,5 +1,9 @@
-# Getting Started with Create React App
+### This was a hack made for [MLH Hacklahoma 2021](https://devpost.com/software/fantasy-dice)
 
+# fantasy-dice
+A mobile webapp to share dice rolls with your friends during gameplay. Allows for physical dice in an online environment.
+
+# Installation
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
